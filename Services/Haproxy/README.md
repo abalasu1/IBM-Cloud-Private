@@ -3,7 +3,7 @@
 ## Nodeport
 - kubectl apply -f nginx.yaml
 
-- Set up haproxy.cfg to load balance across servers and restart haproxy (systemctl restart gaproxy)
+- Set up haproxy.cfg to load balance across servers and restart haproxy (systemctl restart haproxy)
 
 - access url: http://<haproxy-ip>:32514
 
