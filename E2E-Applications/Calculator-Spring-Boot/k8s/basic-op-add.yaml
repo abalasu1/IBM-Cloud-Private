@@ -1,44 +1,54 @@
-apiVersion: extensions/v1beta1
-kind: Deployment
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
 metadata:
-  name: basic-op-add
-  namespace: calculator
   labels:
-    app: basic-op-add
+    app: add
+  name: add
+  namespace: calculator
 spec:
   replicas: 1
-  strategy: 
-    type: Recreate  
+  selector:
+    deploymentconfig: add
+  strategy:
+    activeDeadlineSeconds: 21600
+    rollingParams:
+      intervalSeconds: 1
+      maxSurge: 25%
+      maxUnavailable: 25%
+      timeoutSeconds: 600
+      updatePeriodSeconds: 1
+    type: Rolling
   template:
     metadata:
       labels:
-        app: basic-op-add
+        app: add
+        deploymentconfig: add       
     spec:
       containers:
-      - image: arunimi/basic-op-add:1.0.0
-        name: add
+      - image: image-registry.openshift-image-registry.svc:5000/calculator/add
         imagePullPolicy: Always
+        name: add
         ports:
         - containerPort: 8001
         env:
         - name: SPRING_PROFILES_ACTIVE
-          value: "docker"
-        readinessProbe:
-          httpGet:
-            path: /actuator
-            port: 8001
-          initialDelaySeconds: 10
-          timeoutSeconds: 10
-        livenessProbe:
-          httpGet:
-            path: /actuator/health
-            port: 8001
-          initialDelaySeconds: 60
-          timeoutSeconds: 10          
+          value: "docker"         
         resources:         
           requests:
             cpu: 20m
-            memory: 50Mi      
+            memory: 50Mi 
+  test: false
+  triggers:
+  - imageChangeParams:
+      automatic: true
+      containerNames:
+      - add
+      from:
+        kind: ImageStreamTag
+        name: add:latest
+        namespace: calculator
+    type: ImageChange
+  - type: ConfigChange      
 ---
 apiVersion: v1
 kind: Service
