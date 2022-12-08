@@ -14,7 +14,7 @@
     "body-parser": "*",
     "chance": "*",
     "cors": "*",
-    "express": "4.13.x",
+    "express": "4.18.x",
     "fresh": "^0.5.2",
     "jsep": "*",
     "mime": "^2.4.0",
